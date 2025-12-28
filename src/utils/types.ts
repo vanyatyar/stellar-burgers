@@ -1,15 +1,15 @@
 export type TIngredient = {
   _id: string;
   name: string;
-  type: string;
+  type: 'bun' | 'sauce' | 'main';
   proteins: number;
   fat: number;
   carbohydrates: number;
   calories: number;
   price: number;
   image: string;
-  image_large: string;
   image_mobile: string;
+  image_large: string;
 };
 
 export type TConstructorIngredient = TIngredient & {
@@ -18,11 +18,11 @@ export type TConstructorIngredient = TIngredient & {
 
 export type TOrder = {
   _id: string;
-  status: string;
+  status: 'done' | 'pending' | 'created';
   name: string;
+  number: number;
   createdAt: string;
   updatedAt: string;
-  number: number;
   ingredients: string[];
 };
 
@@ -37,4 +37,20 @@ export type TUser = {
   name: string;
 };
 
+export type TRegisterData = {
+  email: string;
+  name: string;
+  password: string;
+};
+
+export type TLoginData = {
+  email: string;
+  password: string;
+};
+
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export type TSelectedIngredients = {
+  bun: TIngredient | null;
+  ingredients: TIngredient[];
+};
