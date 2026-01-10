@@ -1,8 +1,17 @@
-import React, { FC, RefObject, useState } from 'react';
+import React, { FC, RefObject } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Tab } from '@zlden/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.css';
 import { BurgerIngredientUI as BurgerIngredient } from '../burger-ingredient';
+import { useDispatch, useSelector } from '../../../services/store';
+import {
+  selectConstructorIngredients,
+  selectConstructorBun
+} from '../../../services/selectors';
+import {
+  addIngredient,
+  addBun
+} from '../../../services/slices/burgerConstructorSlice';
 import { TIngredient, TTabMode } from '@utils-types';
 
 interface BurgerIngredientsUIProps {
@@ -33,18 +42,26 @@ export const BurgerIngredientsUI: FC<BurgerIngredientsUIProps> = ({
   onTabClick
 }) => {
   const location = useLocation();
-  const [ingredientCounts, setIngredientCounts] = useState<
-    Record<string, number>
-  >({});
+  const dispatch = useDispatch();
+  const constructorIngredients = useSelector(selectConstructorIngredients);
+  const constructorBun = useSelector(selectConstructorBun);
 
   const getIngredientCount = (ingredientId: string): number =>
-    ingredientCounts[ingredientId] || 0;
+    constructorIngredients.filter((ing) => ing._id === ingredientId).length;
 
-  const handleAddIngredient = (ingredientId: string) => {
-    setIngredientCounts((prevCounts) => ({
-      ...prevCounts,
-      [ingredientId]: (prevCounts[ingredientId] || 0) + 1
-    }));
+  const getBunCount = (bunId: string): number => {
+    if (constructorBun && constructorBun._id === bunId) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const handleAddIngredient = (ingredient: TIngredient) => {
+    if (ingredient.type === 'bun') {
+      dispatch(addBun(ingredient));
+    } else {
+      dispatch(addIngredient(ingredient));
+    }
   };
 
   return (
@@ -73,8 +90,8 @@ export const BurgerIngredientsUI: FC<BurgerIngredientsUIProps> = ({
               <BurgerIngredient
                 key={item._id}
                 ingredient={item}
-                count={getIngredientCount(item._id)}
-                handleAdd={() => handleAddIngredient(item._id)}
+                count={getBunCount(item._id)}
+                handleAdd={() => handleAddIngredient(item)}
                 locationState={{ background: location }}
               />
             ))}
@@ -92,7 +109,7 @@ export const BurgerIngredientsUI: FC<BurgerIngredientsUIProps> = ({
                 key={item._id}
                 ingredient={item}
                 count={getIngredientCount(item._id)}
-                handleAdd={() => handleAddIngredient(item._id)}
+                handleAdd={() => handleAddIngredient(item)}
                 locationState={{ background: location }}
               />
             ))}
@@ -110,7 +127,7 @@ export const BurgerIngredientsUI: FC<BurgerIngredientsUIProps> = ({
                 key={item._id}
                 ingredient={item}
                 count={getIngredientCount(item._id)}
-                handleAdd={() => handleAddIngredient(item._id)}
+                handleAdd={() => handleAddIngredient(item)}
                 locationState={{ background: location }}
               />
             ))}

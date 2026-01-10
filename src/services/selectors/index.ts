@@ -1,30 +1,30 @@
-import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { createSelector } from 'reselect';
 
-// Базовые селекторы
 export const selectIngredients = (state: RootState) => state.ingredients.items;
 export const selectIngredientsLoading = (state: RootState) =>
   state.ingredients.isLoading;
 export const selectIngredientsError = (state: RootState) =>
   state.ingredients.error;
 
-// Мемоизированные селекторы для burger constructor
-export const selectConstructorBun = (state: RootState) =>
-  state.burgerConstructor.bun;
-
-export const selectConstructorIngredients = (state: RootState) =>
+// ✅ ИСПРАВЛЕНО: Используем createSelector для мемоизации
+const selectBun = (state: RootState) => state.burgerConstructor.bun;
+const selectIngredientsList = (state: RootState) =>
   state.burgerConstructor.ingredients;
 
-// Исправленный селектор selectConstructorItems
 export const selectConstructorItems = createSelector(
-  [selectConstructorBun, selectConstructorIngredients],
+  [selectBun, selectIngredientsList],
   (bun, ingredients) => ({
     bun,
     ingredients
   })
 );
 
-// Остальные селекторы
+export const selectConstructorBun = (state: RootState) =>
+  state.burgerConstructor.bun;
+export const selectConstructorIngredients = (state: RootState) =>
+  state.burgerConstructor.ingredients;
+
 export const selectOrderData = (state: RootState) => state.order.orderData;
 export const selectOrderLoading = (state: RootState) => state.order.isLoading;
 export const selectOrderError = (state: RootState) => state.order.error;
@@ -40,6 +40,8 @@ export const selectUserLoading = (state: RootState) => state.user.isLoading;
 export const selectUserError = (state: RootState) => state.user.error;
 export const selectIsAuthenticated = (state: RootState) =>
   state.user.isAuthenticated;
+export const selectIsAuthChecked = (state: RootState) =>
+  state.user.isAuthChecked;
 
 export const selectProfileOrders = (state: RootState) =>
   state.profileOrders.orders;

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getOrdersApi } from '@api';
 import { TOrder } from '@utils-types';
+import { createOrder } from './orderSlice';
 
 interface ProfileOrdersState {
   orders: TOrder[];
@@ -36,6 +37,10 @@ const profileOrdersSlice = createSlice({
       .addCase(fetchProfileOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Error loading orders';
+      })
+      // ✅ ДОБАВЛЯЕМ: Когда создаётся новый заказ, добавляем его в историю
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.orders.unshift(action.payload); // Добавляем в начало списка
       });
   }
 });

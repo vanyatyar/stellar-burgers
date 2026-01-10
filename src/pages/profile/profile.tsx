@@ -1,18 +1,18 @@
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
-
-import { ProfileUI } from '@ui-pages';
 import { useDispatch, useSelector } from '../../services/store';
 import { updateUser } from '../../services/slices/userSlice';
-import { selectUser } from '../../services/selectors';
+import {
+  selectUser,
+  selectUserLoading,
+  selectUserError
+} from '../../services/selectors';
+import { ProfileUI } from '../../components/ui/pages/profile';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-
-  const { isLoading, error } = useSelector((state) => ({
-    isLoading: state.user.isLoading,
-    error: state.user.error
-  }));
+  const isLoading = useSelector(selectUserLoading);
+  const updateUserError = useSelector(selectUserError);
 
   const [formValue, setFormValue] = useState({
     name: user?.name || '',
@@ -29,26 +29,34 @@ export const Profile: FC = () => {
   }, [user]);
 
   const isFormChanged =
-    formValue.name !== (user?.name || '') ||
-    formValue.email !== (user?.email || '') ||
+    formValue.name !== user?.name ||
+    formValue.email !== user?.email ||
     !!formValue.password;
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
 
-    const updateData: { name?: string; email?: string; password?: string } = {};
+    const updateData: Partial<{
+      name?: string;
+      email?: string;
+      password?: string;
+    }> = {};
 
-    if (formValue.name !== (user?.name || '')) updateData.name = formValue.name;
-    if (formValue.email !== (user?.email || ''))
+    if (formValue.name !== user?.name) {
+      updateData.name = formValue.name;
+    }
+    if (formValue.email !== user?.email) {
       updateData.email = formValue.email;
-    if (formValue.password) updateData.password = formValue.password;
+    }
+    if (formValue.password) {
+      updateData.password = formValue.password;
+    }
 
     dispatch(updateUser(updateData));
   };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
-
     setFormValue({
       name: user?.name || '',
       email: user?.email || '',
@@ -70,7 +78,7 @@ export const Profile: FC = () => {
       handleCancel={handleCancel}
       handleSubmit={handleSubmit}
       handleInputChange={handleInputChange}
-      updateUserError={error ?? undefined}
+      updateUserError={(updateUserError ?? undefined) as string | undefined}
     />
   );
 };

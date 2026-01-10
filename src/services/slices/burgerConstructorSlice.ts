@@ -16,45 +16,56 @@ const burgerConstructorSlice = createSlice({
   name: 'burgerConstructor',
   initialState,
   reducers: {
-    addBun: (state, action: PayloadAction<TIngredient>) => {
-      state.bun = {
-        ...action.payload,
-        id: uuidv4()
-      };
+    addBun: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.bun = action.payload;
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: {
+          ...ingredient,
+          id: uuidv4()
+        } as TConstructorIngredient
+      })
     },
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      state.ingredients.push({
-        ...action.payload,
-        id: uuidv4()
-      });
+
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.ingredients.push(action.payload);
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: {
+          ...ingredient,
+          id: uuidv4()
+        } as TConstructorIngredient
+      })
     },
+
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(
-        (ingredient) => ingredient.id !== action.payload
+        (item) => item.id !== action.payload
       );
     },
+
     moveIngredientUp: (state, action: PayloadAction<number>) => {
-      if (action.payload > 0) {
-        [
-          state.ingredients[action.payload],
-          state.ingredients[action.payload - 1]
-        ] = [
-          state.ingredients[action.payload - 1],
-          state.ingredients[action.payload]
+      const index = action.payload;
+      if (index > 0) {
+        [state.ingredients[index - 1], state.ingredients[index]] = [
+          state.ingredients[index],
+          state.ingredients[index - 1]
         ];
       }
     },
+
     moveIngredientDown: (state, action: PayloadAction<number>) => {
-      if (action.payload < state.ingredients.length - 1) {
-        [
-          state.ingredients[action.payload],
-          state.ingredients[action.payload + 1]
-        ] = [
-          state.ingredients[action.payload + 1],
-          state.ingredients[action.payload]
+      const index = action.payload;
+      if (index < state.ingredients.length - 1) {
+        [state.ingredients[index + 1], state.ingredients[index]] = [
+          state.ingredients[index],
+          state.ingredients[index + 1]
         ];
       }
     },
+
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];

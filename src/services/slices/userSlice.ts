@@ -1,4 +1,3 @@
-// src/services/slices/userSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   registerUserApi,
@@ -16,13 +15,15 @@ interface UserState {
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  isAuthChecked: boolean;
 }
 
 const initialState: UserState = {
   user: null,
   isLoading: false,
   error: null,
-  isAuthenticated: false
+  isAuthenticated: false,
+  isAuthChecked: false
 };
 
 export const registerUser = createAsyncThunk(
@@ -45,10 +46,17 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const getUser = createAsyncThunk('user/getUser', async () => {
-  const response = await getUserApi();
-  return response.user;
-});
+export const getUser = createAsyncThunk(
+  'user/getUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getUserApi();
+      return response.user;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const updateUser = createAsyncThunk(
   'user/updateUser',
@@ -70,6 +78,9 @@ const userSlice = createSlice({
   reducers: {
     setAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload;
+    },
+    resetAuthCheck: (state) => {
+      state.isAuthChecked = false;
     }
   },
   extraReducers: (builder) => {
@@ -82,10 +93,12 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.isAuthChecked = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Registration error';
+        state.isAuthChecked = true;
       })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -95,17 +108,27 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.isAuthChecked = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Login error';
+        state.isAuthChecked = true;
+      })
+      .addCase(getUser.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(getUser.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.isAuthChecked = true;
       })
       .addCase(getUser.rejected, (state) => {
+        state.isLoading = false;
         state.isAuthenticated = false;
+        state.isAuthChecked = true;
+        state.user = null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -113,9 +136,10 @@ const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.isAuthChecked = true;
       });
   }
 });
 
-export const { setAuthenticated } = userSlice.actions;
+export const { setAuthenticated, resetAuthCheck } = userSlice.actions;
 export default userSlice.reducer;

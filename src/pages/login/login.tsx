@@ -1,38 +1,36 @@
 import { FC, SyntheticEvent, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
 import { useDispatch, useSelector } from '../../services/store';
 import { loginUser } from '../../services/slices/userSlice';
-import { LoginUI } from '@ui-pages';
+import { selectUserLoading, selectUserError } from '../../services/selectors';
+import { LoginUI } from '../../components/ui/pages/login';
 
 export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { isLoading, error } = useSelector((state) => ({
-    isLoading: state.user.isLoading,
-    error: state.user.error
-  }));
+  const isLoading = useSelector(selectUserLoading);
+  const error = useSelector(selectUserError);
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        const from = location.state?.from?.pathname || '/';
+        const from = (location.state as any)?.from?.pathname || '/';
         navigate(from, { replace: true });
       })
-      .catch(() => {});
+      .catch(() => {
+        // Ошибка уже в state
+      });
   };
 
   return (
     <LoginUI
-      errorText={error ?? undefined}
+      errorText={error || undefined}
       email={email}
       setEmail={setEmail}
       password={password}
