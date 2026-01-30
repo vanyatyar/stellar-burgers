@@ -1,21 +1,19 @@
-// src/services/slices/ingredientsSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getIngredientsApi } from '@api';
 import { TIngredient } from '@utils-types';
 
 interface IngredientsState {
-  items: TIngredient[];
+  data: TIngredient[];
   isLoading: boolean;
-  error: string | null;
+  error: string;
 }
 
 const initialState: IngredientsState = {
-  items: [],
+  data: [],
   isLoading: false,
-  error: null
+  error: ''
 };
 
-// ТЕСТОВЫЕ ДАННЫЕ
 const TEST_INGREDIENTS: TIngredient[] = [
   {
     _id: '60666c42cc7b410027a1a9b1',
@@ -107,7 +105,6 @@ export const fetchIngredients = createAsyncThunk(
       return data;
     } catch (error: any) {
       console.error('API fetch failed, using test data:', error.message);
-      // Возвращаем тестовые данные если API не работает
       return TEST_INGREDIENTS;
     }
   }
@@ -121,19 +118,16 @@ const ingredientsSlice = createSlice({
     builder
       .addCase(fetchIngredients.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.error = '';
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.items = action.payload;
+        state.data = action.payload;
         console.log('Ingredients saved to store:', action.payload.length);
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Error loading ingredients';
-        // Используем тестовые данные даже при ошибке
-        state.items = TEST_INGREDIENTS;
-        console.log('Using test ingredients:', TEST_INGREDIENTS.length);
       });
   }
 });

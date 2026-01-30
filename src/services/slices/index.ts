@@ -1,7 +1,6 @@
 import { RootState } from '../store';
 
-export const selectIngredients = (state: RootState) =>
-  state.ingredients.items;
+export const selectIngredients = (state: RootState) => state.ingredients.data;
 export const selectIngredientsLoading = (state: RootState) =>
   state.ingredients.isLoading;
 export const selectIngredientsError = (state: RootState) =>
@@ -17,14 +16,13 @@ export const selectConstructorBun = (state: RootState) =>
 export const selectConstructorIngredients = (state: RootState) =>
   state.burgerConstructor.ingredients;
 
-export const selectOrderData = (state: RootState) => state.order.orderData;
+export const selectOrderData = (state: RootState) => state.order.data;
 export const selectOrderLoading = (state: RootState) => state.order.isLoading;
 export const selectOrderError = (state: RootState) => state.order.error;
 
 export const selectFeedOrders = (state: RootState) => state.feed.orders;
 export const selectFeedTotal = (state: RootState) => state.feed.total;
-export const selectFeedTotalToday = (state: RootState) =>
-  state.feed.totalToday;
+export const selectFeedTotalToday = (state: RootState) => state.feed.totalToday;
 export const selectFeedLoading = (state: RootState) => state.feed.isLoading;
 export const selectFeedError = (state: RootState) => state.feed.error;
 

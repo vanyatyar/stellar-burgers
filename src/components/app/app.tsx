@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelector } from '../../services/store';
 import { getUser } from '../../services/slices/userSlice';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
-import { fetchFeeds } from '../../services/slices/feedSlice';
+import { fetchOrders } from '../../services/slices/feedSlice';
 
 import {
   selectIsAuthenticated,
@@ -186,7 +186,7 @@ const AppContent: FC = () => {
     dispatch(getUser()).catch(() => {});
 
     dispatch(fetchIngredients());
-    dispatch(fetchFeeds());
+    dispatch(fetchOrders());
   }, [dispatch]);
 
   return (

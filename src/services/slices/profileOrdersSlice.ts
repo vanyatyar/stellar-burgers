@@ -6,18 +6,25 @@ import { createOrder } from './orderSlice';
 interface ProfileOrdersState {
   orders: TOrder[];
   isLoading: boolean;
-  error: string | null;
+  error: string;
 }
 
 const initialState: ProfileOrdersState = {
   orders: [],
   isLoading: false,
-  error: null
+  error: ''
 };
 
 export const fetchProfileOrders = createAsyncThunk(
   'profileOrders/fetchOrders',
-  async () => await getOrdersApi()
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await getOrdersApi();
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Error loading orders');
+    }
+  }
 );
 
 const profileOrdersSlice = createSlice({
@@ -28,7 +35,7 @@ const profileOrdersSlice = createSlice({
     builder
       .addCase(fetchProfileOrders.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.error = '';
       })
       .addCase(fetchProfileOrders.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -36,11 +43,10 @@ const profileOrdersSlice = createSlice({
       })
       .addCase(fetchProfileOrders.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Error loading orders';
+        state.error = (action.payload as string) || 'Error loading orders';
       })
-      // ✅ ДОБАВЛЯЕМ: Когда создаётся новый заказ, добавляем его в историю
       .addCase(createOrder.fulfilled, (state, action) => {
-        state.orders.unshift(action.payload); // Добавляем в начало списка
+        state.orders.unshift(action.payload);
       });
   }
 });

@@ -1,13 +1,12 @@
 import { RootState } from '../store';
 import { createSelector } from 'reselect';
 
-export const selectIngredients = (state: RootState) => state.ingredients.items;
+export const selectIngredients = (state: RootState) => state.ingredients.data;
 export const selectIngredientsLoading = (state: RootState) =>
   state.ingredients.isLoading;
 export const selectIngredientsError = (state: RootState) =>
   state.ingredients.error;
 
-// ✅ ИСПРАВЛЕНО: Используем createSelector для мемоизации
 const selectBun = (state: RootState) => state.burgerConstructor.bun;
 const selectIngredientsList = (state: RootState) =>
   state.burgerConstructor.ingredients;
@@ -25,7 +24,7 @@ export const selectConstructorBun = (state: RootState) =>
 export const selectConstructorIngredients = (state: RootState) =>
   state.burgerConstructor.ingredients;
 
-export const selectOrderData = (state: RootState) => state.order.orderData;
+export const selectOrderData = (state: RootState) => state.order.data;
 export const selectOrderLoading = (state: RootState) => state.order.isLoading;
 export const selectOrderError = (state: RootState) => state.order.error;
 

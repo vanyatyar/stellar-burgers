@@ -3,7 +3,7 @@ import { FeedUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
 import { selectFeedOrders, selectFeedLoading } from '../../services/selectors';
-import { fetchFeeds } from '../../services/slices/feedSlice';
+import { fetchOrders } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
@@ -11,11 +11,11 @@ export const Feed: FC = () => {
   const isLoading = useSelector(selectFeedLoading);
 
   useEffect(() => {
-    dispatch(fetchFeeds());
+    dispatch(fetchOrders());
   }, [dispatch]);
 
   const handleGetFeeds = () => {
-    dispatch(fetchFeeds());
+    dispatch(fetchOrders());
   };
 
   if (isLoading) {

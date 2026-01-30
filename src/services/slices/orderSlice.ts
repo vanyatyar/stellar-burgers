@@ -3,15 +3,15 @@ import { orderBurgerApi } from '@api';
 import { TOrder } from '@utils-types';
 
 interface OrderState {
-  orderData: TOrder | null;
+  data: TOrder | null;
   isLoading: boolean;
-  error: string | null;
+  error: string;
 }
 
 const initialState: OrderState = {
-  orderData: null,
+  data: null,
   isLoading: false,
-  error: null
+  error: ''
 };
 
 export const createOrder = createAsyncThunk(
@@ -31,19 +31,19 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     resetOrder: (state) => {
-      state.orderData = null;
-      state.error = null;
+      state.data = null;
+      state.error = '';
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.error = '';
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.orderData = action.payload;
+        state.data = action.payload;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.isLoading = false;

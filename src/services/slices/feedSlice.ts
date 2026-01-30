@@ -7,7 +7,7 @@ interface FeedState {
   total: number;
   totalToday: number;
   isLoading: boolean;
-  error: string | null;
+  error: string;
 }
 
 const initialState: FeedState = {
@@ -15,12 +15,19 @@ const initialState: FeedState = {
   total: 0,
   totalToday: 0,
   isLoading: false,
-  error: null
+  error: ''
 };
 
-export const fetchFeeds = createAsyncThunk(
-  'feed/fetchFeeds',
-  async () => await getFeedsApi()
+export const fetchOrders = createAsyncThunk(
+  'feed/fetchOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await getFeedsApi();
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Error loading feeds');
+    }
+  }
 );
 
 const feedSlice = createSlice({
@@ -29,19 +36,19 @@ const feedSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchFeeds.pending, (state) => {
+      .addCase(fetchOrders.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.error = '';
       })
-      .addCase(fetchFeeds.fulfilled, (state, action) => {
+      .addCase(fetchOrders.fulfilled, (state, action) => {
         state.isLoading = false;
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
       })
-      .addCase(fetchFeeds.rejected, (state, action) => {
+      .addCase(fetchOrders.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Error loading feeds';
+        state.error = (action.payload as string) || 'Error loading feeds';
       });
   }
 });

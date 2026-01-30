@@ -54,13 +54,17 @@ export const BurgerConstructor: FC = memo(() => {
   }, [constructorItems.bun, constructorItems.ingredients]);
 
   return (
-    <BurgerConstructorUI
-      price={price}
-      orderRequest={orderRequest}
-      constructorItems={constructorItems}
-      orderModalData={orderModalData}
-      onOrderClick={onOrderClick}
-      closeOrderModal={closeOrderModal}
-    />
+    <div data-testid='burger-constructor'>
+      <BurgerConstructorUI
+        price={price}
+        orderRequest={orderRequest}
+        constructorItems={constructorItems}
+        orderModalData={orderModalData}
+        onOrderClick={onOrderClick}
+        closeOrderModal={closeOrderModal}
+      />
+    </div>
   );
 });
+
+BurgerConstructor.displayName = 'BurgerConstructor';
