@@ -24,8 +24,9 @@ export const fetchOrders = createAsyncThunk(
     try {
       const data = await getFeedsApi();
       return data;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Error loading feeds');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return rejectWithValue(message);
     }
   }
 );

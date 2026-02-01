@@ -103,9 +103,9 @@ export const fetchIngredients = createAsyncThunk(
       const data = await getIngredientsApi();
       console.log('API fetch success:', data.length, 'ingredients');
       return data;
-    } catch (error: any) {
-      console.error('API fetch failed, using test data:', error.message);
-      return TEST_INGREDIENTS;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return rejectWithValue(message);
     }
   }
 );
@@ -127,7 +127,10 @@ const ingredientsSlice = createSlice({
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Error loading ingredients';
+        state.error =
+          (action.payload as string) ||
+          action.error?.message ||
+          'Error loading ingredients';
       });
   }
 });

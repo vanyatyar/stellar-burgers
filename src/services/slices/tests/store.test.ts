@@ -23,9 +23,8 @@ describe('store initialization', () => {
 
   it('должен правильно обрабатывать неизвестный экшен', () => {
     const initialState = store.getState();
-    
-    store.dispatch({ type: 'UNKNOWN_ACTION' } as any);
-    
+
+    store.dispatch({ type: 'UNKNOWN_ACTION' } as { type: string });
     const newState = store.getState();
 
     expect(newState).toEqual(initialState);

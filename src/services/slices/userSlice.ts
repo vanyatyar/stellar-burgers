@@ -52,8 +52,9 @@ export const getUser = createAsyncThunk(
     try {
       const response = await getUserApi();
       return response.user;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return rejectWithValue(message);
     }
   }
 );

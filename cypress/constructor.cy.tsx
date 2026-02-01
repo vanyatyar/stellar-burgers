@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 describe('Stellar Burgers - Конструктор бургера', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/api/ingredients', {

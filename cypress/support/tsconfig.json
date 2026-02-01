@@ -18,5 +18,11 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["cypress", "node"]
   },
-  "include": ["**/*.cy.ts", "**/*.cy.tsx", "**/*.d.ts"]
+    "include": [
+  "**/*.ts",
+  "**/*.tsx",
+  "**/*.cy.ts",
+  "**/*.cy.tsx",
+  "**/*.d.ts"
+]
 }

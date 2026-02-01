@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from '../../services/store';
 import { loginUser } from '../../services/slices/userSlice';
 import { selectUserLoading, selectUserError } from '../../services/selectors';
 import { LoginUI } from '../../components/ui/pages/login';
-
 export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +19,9 @@ export const Login: FC = () => {
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        const from = (location.state as any)?.from?.pathname || '/';
+        const from =
+          (location.state as { from?: { pathname: string } })?.from?.pathname ||
+          '/';
         navigate(from, { replace: true });
       })
       .catch(() => {

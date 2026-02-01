@@ -57,7 +57,10 @@ describe('burgerConstructorSlice', () => {
 
   describe('addIngredient', () => {
     it('должен добавить булку в конструктор', () => {
-      const state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      const state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       expect(state.bun).toMatchObject(mockBun);
       expect(state.bun?.uid).toBe('bun-1');
@@ -66,7 +69,10 @@ describe('burgerConstructorSlice', () => {
     });
 
     it('должен заменить булку на новую', () => {
-      let state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      let state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       const newBun: TIngredient = { ...mockBun, _id: 'bun-2', price: 1000 };
 
@@ -78,7 +84,10 @@ describe('burgerConstructorSlice', () => {
     });
 
     it('должен добавить начинку в конструктор', () => {
-      let state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      let state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       state = burgerConstructorReducer(state, addIngredient(mockMain));
 
@@ -89,20 +98,28 @@ describe('burgerConstructorSlice', () => {
     });
 
     it('должен добавить несколько ингредиентов', () => {
-      let state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      let state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       state = burgerConstructorReducer(state, addIngredient(mockMain));
 
       state = burgerConstructorReducer(state, addIngredient(mockSauce));
 
       expect(state.ingredients).toHaveLength(2);
-      expect(state.total).toBe(mockBun.price * 2 + mockMain.price + mockSauce.price);
+      expect(state.total).toBe(
+        mockBun.price * 2 + mockMain.price + mockSauce.price
+      );
     });
   });
 
   describe('removeIngredient', () => {
     it('должен удалить ингредиент из конструктора', () => {
-      let state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      let state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       state = burgerConstructorReducer(state, addIngredient(mockMain));
 
@@ -118,7 +135,10 @@ describe('burgerConstructorSlice', () => {
 
   describe('reorderIngredients', () => {
     it('должен изменить порядок ингредиентов', () => {
-      let state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      let state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       state = burgerConstructorReducer(state, addIngredient(mockMain));
 
@@ -139,7 +159,10 @@ describe('burgerConstructorSlice', () => {
 
   describe('clearConstructor', () => {
     it('должен очистить конструктор', () => {
-      let state = burgerConstructorReducer(initialState, addIngredient(mockBun));
+      let state = burgerConstructorReducer(
+        initialState,
+        addIngredient(mockBun)
+      );
 
       state = burgerConstructorReducer(state, addIngredient(mockMain));
 

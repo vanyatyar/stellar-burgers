@@ -64,7 +64,7 @@ describe('feedSlice', () => {
       const state = feedReducer({ ...initialState, isLoading: true }, action);
 
       expect(state.isLoading).toBe(false);
-      expect(state.orders).toEqual([]); 
+      expect(state.orders).toEqual([]);
       expect(state.error).toBe(errorMessage);
     });
   });
