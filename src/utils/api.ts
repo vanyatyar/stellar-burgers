@@ -1,7 +1,5 @@
-// src/utils/api.ts
 const BASE_URL = 'https://norma.nomoreparties.space/api';
 
-// ДОБАВЬТЕ эту проверку:
 const checkResponse = <T>(res: Response): Promise<T> => {
   console.log('API Response:', res.status, res.url);
 
