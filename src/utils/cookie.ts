@@ -16,7 +16,6 @@ export const setCookie = (
   if (props) {
     const options = { ...props };
 
-    // Обработка expires
     if (options.expires) {
       let expires: Date;
 
@@ -26,14 +25,12 @@ export const setCookie = (
         expires = new Date();
         expires.setTime(expires.getTime() + options.expires * 1000);
       } else {
-        // Если строка - пытаемся создать Date
         expires = new Date(options.expires);
       }
 
       cookieString += `; expires=${expires.toUTCString()}`;
     }
 
-    // Добавляем остальные свойства
     if (options.path) {
       cookieString += `; path=${options.path}`;
     }
