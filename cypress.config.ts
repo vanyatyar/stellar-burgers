@@ -3,7 +3,7 @@ import { defineConfig } from 'cypress';
 export default defineConfig({
   chromeWebSecurity: false,
   e2e: {
-    baseUrl: 'http://localhost:8081',
+    baseUrl: 'http://localhost:8080',
     specPattern: 'cypress/e2e/**/*.cy.{js,ts}',
     supportFile: 'cypress/support/e2e.ts',
     viewportWidth: 1280,
