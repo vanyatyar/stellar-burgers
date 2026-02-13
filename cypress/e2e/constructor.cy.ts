@@ -2,64 +2,72 @@
 
 describe('Stellar Burgers - Конструктор бургера', () => {
   beforeEach(() => {
-    
-    cy.intercept('GET', '**/api/ingredients', {
-      statusCode: 200,
-      body: {
-        success: true,
-        data: [
-          {
-            _id: '60666c42cc7b410027a1a9b1',
-            name: 'Краторная булка N-200i',
-            type: 'bun',
-            proteins: 80,
-            fat: 24,
-            carbohydrates: 53,
-            calories: 420,
-            price: 1255,
-            image: 'https://code.s3.yandex.net/react/code/bun-02.png',
-            image_mobile: 'https://code.s3.yandex.net/react/code/bun-02-mobile.png',
-            image_large: 'https://code.s3.yandex.net/react/code/bun-02-large.png',
-            __v: 0
-          },
-          {
-            _id: '60666c42cc7b410027a1a9b5',
-            name: 'Говяжий метеорит (отбивная)',
-            type: 'main',
-            proteins: 800,
-            fat: 800,
-            carbohydrates: 300,
-            calories: 2674,
-            price: 3000,
-            image: 'https://code.s3.yandex.net/react/code/meat-04.png',
-            image_mobile: 'https://code.s3.yandex.net/react/code/meat-04-mobile.png',
-            image_large: 'https://code.s3.yandex.net/react/code/meat-04-large.png',
-            __v: 0
-          },
-          {
-            _id: '60666c42cc7b410027a1a9b7',
-            name: 'Соус Spicy-X',
-            type: 'sauce',
-            proteins: 30,
-            fat: 20,
-            carbohydrates: 40,
-            calories: 30,
-            price: 90,
-            image: 'https://code.s3.yandex.net/react/code/sauce-02.png',
-            image_mobile: 'https://code.s3.yandex.net/react/code/sauce-02-mobile.png',
-            image_large: 'https://code.s3.yandex.net/react/code/sauce-02-large.png',
-            __v: 0
-          }
-        ]
-      }
+    cy.intercept('GET', '**/ingredients**', (req) => {
+      req.reply({
+        statusCode: 200,
+        body: {
+          success: true,
+          data: [
+            {
+              _id: '643d69a5c3f7b9001cfa093c',
+              name: 'Краторная булка N-200i',
+              type: 'bun',
+              proteins: 80,
+              fat: 24,
+              carbohydrates: 53,
+              calories: 420,
+              price: 1255,
+              image: 'https://code.s3.yandex.net/react/code/bun-02.png',
+              image_mobile: 'https://code.s3.yandex.net/react/code/bun-02-mobile.png',
+              image_large: 'https://code.s3.yandex.net/react/code/bun-02-large.png'
+            },
+            {
+              _id: '643d69a5c3f7b9001cfa093d',
+              name: 'Флюоресцентная булка R2-D3',
+              type: 'bun',
+              proteins: 44,
+              fat: 26,
+              carbohydrates: 85,
+              calories: 643,
+              price: 988,
+              image: 'https://code.s3.yandex.net/react/code/bun-01.png',
+              image_mobile: 'https://code.s3.yandex.net/react/code/bun-01-mobile.png',
+              image_large: 'https://code.s3.yandex.net/react/code/bun-01-large.png'
+            },
+            {
+              _id: '643d69a5c3f7b9001cfa093e',
+              name: 'Филе Люминесцентного тетраодона',
+              type: 'main',
+              proteins: 44,
+              fat: 26,
+              carbohydrates: 85,
+              calories: 643,
+              price: 988,
+              image: 'https://code.s3.yandex.net/react/code/meat-03.png',
+              image_mobile: 'https://code.s3.yandex.net/react/code/meat-03-mobile.png',
+              image_large: 'https://code.s3.yandex.net/react/code/meat-03-large.png'
+            },
+            {
+              _id: '643d69a5c3f7b9001cfa0942',
+              name: 'Соус Фалленианского плотоядного растения',
+              type: 'sauce',
+              proteins: 234,
+              fat: 171,
+              carbohydrates: 11,
+              calories: 426,
+              price: 812,
+              image: 'https://code.s3.yandex.net/react/code/sauce-01.png',
+              image_mobile: 'https://code.s3.yandex.net/react/code/sauce-01-mobile.png',
+              image_large: 'https://code.s3.yandex.net/react/code/sauce-01-large.png'
+            }
+          ]
+        }
+      });
     }).as('getIngredients');
 
     cy.intercept('GET', '**/api/auth/user', {
       statusCode: 401,
-      body: {
-        success: false,
-        message: 'jwt expired'
-      }
+      body: { success: false, message: 'jwt expired' }
     }).as('getUser');
 
     cy.intercept('GET', '**/api/orders/all', {
@@ -84,148 +92,144 @@ describe('Stellar Burgers - Конструктор бургера', () => {
     }).as('createOrder');
 
     cy.visit('/', {
+      failOnStatusCode: false,
       onBeforeLoad(win) {
-        win.localStorage.setItem(
-          'accessToken',
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NmI0ZjM4ZDgyOWJlMDAxY2U3OGYyYiIsImlhdCI6MTczNzU0MDIxMiwiZXhwIjoxNzM3NTQxNDEyfQ.test'
-        );
-        win.localStorage.setItem('refreshToken', 'test_refresh_token_12345');
+        win.localStorage.setItem('accessToken', 'Bearer test');
+        win.localStorage.setItem('refreshToken', 'test_refresh');
       }
     });
-    
-    cy.contains('Краторная булка', { timeout: 15000 }).should('be.visible');
+
+    cy.contains('Краторная булка N-200i', { timeout: 15000 }).should('be.visible');
   });
 
   describe('Добавление ингредиентов в конструктор', () => {
     it('должно добавить булку в конструктор', () => {
-      cy.contains('Краторная булка')
-        .parents('li')
+      cy.contains('Краторная булка N-200i')
+        .parent()
         .find('button')
-        .should('be.visible')
         .click();
-      
-      cy.wait(500);
-      
+
       cy.get('body').should('exist');
     });
 
     it('должно добавить начинку в конструктор', () => {
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
-      cy.contains('Говяжий метеорит').parents('li').find('button').click();
-      cy.wait(500);
-      
+      cy.contains('Краторная булка N-200i')
+        .parent()
+        .find('button')
+        .click();
+
+      cy.contains('Филе Люминесцентного тетраодона')
+        .parent()
+        .find('button')
+        .click();
+
       cy.get('body').should('exist');
     });
 
     it('должно добавить соус в конструктор', () => {
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
-      cy.contains('Соус Spicy-X').parents('li').find('button').click();
-      cy.wait(500);
-      
+      cy.contains('Краторная булка N-200i')
+        .parent()
+        .find('button')
+        .click();
+
+      cy.contains('Соус Фалленианского плотоядного растения')
+        .parent()
+        .find('button')
+        .click();
+
       cy.get('body').should('exist');
     });
 
     it('должно заменить булку на другую', () => {
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
+      cy.contains('Краторная булка N-200i')
+        .parent()
+        .find('button')
+        .click();
+
+      cy.contains('Флюоресцентная булка R2-D3')
+        .parent()
+        .find('button')
+        .click();
+
       cy.get('body').should('exist');
     });
   });
 
   describe('Модальное окно ингредиента', () => {
     it('должно открыть модальное окно при клике на ингредиент', () => {
-      cy.contains('Краторная булка').click();
-      cy.wait(1000);
-      
+      cy.contains('Краторная булка N-200i').click();
       cy.get('body').should('exist');
     });
 
-    it('должно закрыть модальное окно при клике на крестик', () => {
-      cy.contains('Краторная булка').click();
-      cy.wait(1000);
-      
+    it('должно закрыть модальное окно при нажатии ESC', () => {
+      cy.contains('Краторная булка N-200i').click();
       cy.get('body').type('{esc}');
-      cy.wait(500);
-      
       cy.get('body').should('exist');
     });
 
     it('должно закрыть модальное окно при клике на оверлей', () => {
-      cy.contains('Краторная булка').click();
-      cy.wait(1000);
-      
+      cy.contains('Краторная булка N-200i').click();
       cy.get('body').click(10, 10, { force: true });
-      cy.wait(500);
-      
       cy.get('body').should('exist');
     });
 
     it('должно отображать правильные данные ингредиента в модале', () => {
-      cy.contains('Краторная булка').click();
-      cy.wait(1000);
-      
-      cy.get('body').should('contain', 'Краторная булка');
-      
+      cy.contains('Краторная булка N-200i').click();
+      cy.get('body').should('contain', 'Краторная булка N-200i');
       cy.get('body').type('{esc}');
-      cy.wait(500);
     });
   });
 
   describe('Создание заказа', () => {
     it('должно создать заказ с правильным номером', () => {
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
-      cy.contains('Говяжий метеорит').parents('li').find('button').click();
-      cy.wait(500);
+      cy.contains('Краторная булка N-200i')
+        .parent()
+        .find('button')
+        .click();
+
+      cy.contains('Филе Люминесцентного тетраодона')
+        .parent()
+        .find('button')
+        .click();
 
       cy.contains(/оформить заказ/i).click();
-      
-      cy.wait('@createOrder', { timeout: 15000 });
-      cy.wait(2000);
-      
-      cy.get('body').should('contain', '12345');
+
+      cy.contains('12345', { timeout: 15000 }).should('be.visible');
     });
 
     it('должно закрыть модальное окно заказа', () => {
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
-      cy.contains('Говяжий метеорит').parents('li').find('button').click();
-      cy.wait(500);
+      cy.contains('Краторная булка N-200i')
+        .parent()
+        .find('button')
+        .click();
+
+      cy.contains('Филе Люминесцентного тетраодона')
+        .parent()
+        .find('button')
+        .click();
 
       cy.contains(/оформить заказ/i).click();
-      cy.wait('@createOrder', { timeout: 15000 });
-      cy.wait(2000);
 
+      cy.contains('12345', { timeout: 15000 }).should('be.visible');
       cy.get('body').type('{esc}');
-      cy.wait(500);
-      
       cy.get('body').should('exist');
     });
 
     it('должно очистить конструктор после создания заказа', () => {
-      cy.contains('Краторная булка').parents('li').find('button').click();
-      cy.wait(500);
-      
-      cy.contains('Говяжий метеорит').parents('li').find('button').click();
-      cy.wait(500);
+      cy.contains('Краторная булка N-200i')
+        .parent()
+        .find('button')
+        .click();
+
+      cy.contains('Филе Люминесцентного тетраодона')
+        .parent()
+        .find('button')
+        .click();
 
       cy.contains(/оформить заказ/i).click();
-      cy.wait('@createOrder', { timeout: 15000 });
-      cy.wait(2000);
 
+      cy.contains('12345', { timeout: 15000 }).should('be.visible');
       cy.get('body').type('{esc}');
-      cy.wait(1000);
-      
       cy.get('body').should('exist');
     });
   });
