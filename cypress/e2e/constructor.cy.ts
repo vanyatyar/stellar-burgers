@@ -2,75 +2,22 @@
 
 describe('Stellar Burgers - Конструктор бургера', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/ingredients**', (req) => {
-      req.reply({
-        statusCode: 200,
-        body: {
-          success: true,
-          data: [
-            {
-              _id: '643d69a5c3f7b9001cfa093c',
-              name: 'Краторная булка N-200i',
-              type: 'bun',
-              proteins: 80,
-              fat: 24,
-              carbohydrates: 53,
-              calories: 420,
-              price: 1255,
-              image: 'https://code.s3.yandex.net/react/code/bun-02.png',
-              image_mobile: 'https://code.s3.yandex.net/react/code/bun-02-mobile.png',
-              image_large: 'https://code.s3.yandex.net/react/code/bun-02-large.png'
-            },
-            {
-              _id: '643d69a5c3f7b9001cfa093d',
-              name: 'Флюоресцентная булка R2-D3',
-              type: 'bun',
-              proteins: 44,
-              fat: 26,
-              carbohydrates: 85,
-              calories: 643,
-              price: 988,
-              image: 'https://code.s3.yandex.net/react/code/bun-01.png',
-              image_mobile: 'https://code.s3.yandex.net/react/code/bun-01-mobile.png',
-              image_large: 'https://code.s3.yandex.net/react/code/bun-01-large.png'
-            },
-            {
-              _id: '643d69a5c3f7b9001cfa093e',
-              name: 'Филе Люминесцентного тетраодона',
-              type: 'main',
-              proteins: 44,
-              fat: 26,
-              carbohydrates: 85,
-              calories: 643,
-              price: 988,
-              image: 'https://code.s3.yandex.net/react/code/meat-03.png',
-              image_mobile: 'https://code.s3.yandex.net/react/code/meat-03-mobile.png',
-              image_large: 'https://code.s3.yandex.net/react/code/meat-03-large.png'
-            },
-            {
-              _id: '643d69a5c3f7b9001cfa0942',
-              name: 'Соус Фалленианского плотоядного растения',
-              type: 'sauce',
-              proteins: 234,
-              fat: 171,
-              carbohydrates: 11,
-              calories: 426,
-              price: 812,
-              image: 'https://code.s3.yandex.net/react/code/sauce-01.png',
-              image_mobile: 'https://code.s3.yandex.net/react/code/sauce-01-mobile.png',
-              image_large: 'https://code.s3.yandex.net/react/code/sauce-01-large.png'
-            }
-          ]
-        }
-      });
+    cy.intercept('GET', 'https://norma.education-services.ru/api/ingredients', { 
+      fixture: 'ingredients.json' 
     }).as('getIngredients');
 
-    cy.intercept('GET', '**/api/auth/user', {
-      statusCode: 401,
-      body: { success: false, message: 'jwt expired' }
+    cy.intercept('GET', 'https://norma.education-services.ru/api/auth/user', {
+      statusCode: 200,
+      body: {
+        success: true,
+        user: {
+          email: 'test@test.com',
+          name: 'Test User'
+        }
+      }
     }).as('getUser');
 
-    cy.intercept('GET', '**/api/orders/all', {
+    cy.intercept('GET', 'https://norma.education-services.ru/api/orders/all', {
       statusCode: 200,
       body: {
         success: true,
@@ -80,7 +27,7 @@ describe('Stellar Burgers - Конструктор бургера', () => {
       }
     }).as('getOrders');
 
-    cy.intercept('POST', '**/api/orders', {
+    cy.intercept('POST', 'https://norma.education-services.ru/api/orders', {
       statusCode: 200,
       body: {
         success: true,
@@ -94,143 +41,170 @@ describe('Stellar Burgers - Конструктор бургера', () => {
     cy.visit('/', {
       failOnStatusCode: false,
       onBeforeLoad(win) {
-        win.localStorage.setItem('accessToken', 'Bearer test');
-        win.localStorage.setItem('refreshToken', 'test_refresh');
+        win.localStorage.setItem('accessToken', 'Bearer test-token');
+        win.localStorage.setItem('refreshToken', 'test-refresh-token');
       }
     });
 
-    cy.contains('Краторная булка N-200i', { timeout: 15000 }).should('be.visible');
+    cy.wait('@getIngredients', { timeout: 10000 });
+    
+    cy.contains('Краторная булка N-200i', { timeout: 10000 }).should('be.visible');
   });
 
   describe('Добавление ингредиентов в конструктор', () => {
     it('должно добавить булку в конструктор', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
-      cy.get('body').should('exist');
+      cy.get('[class*="constructor-element"]').should('contain', 'Краторная булка N-200i');
     });
 
     it('должно добавить начинку в конструктор', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains('Филе Люминесцентного тетраодона')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
-      cy.get('body').should('exist');
+      cy.get('[class*="constructor-element"]').should('contain', 'Филе Люминесцентного тетраодона');
     });
 
     it('должно добавить соус в конструктор', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains('Соус Фалленианского плотоядного растения')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
-      cy.get('body').should('exist');
+      cy.get('[class*="constructor-element"]').should('contain', 'Соус Фалленианского плотоядного растения');
     });
 
     it('должно заменить булку на другую', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains('Флюоресцентная булка R2-D3')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
-      cy.get('body').should('exist');
+      cy.get('[class*="constructor-element"]').should('contain', 'Флюоресцентная булка R2-D3');
     });
   });
 
   describe('Модальное окно ингредиента', () => {
     it('должно открыть модальное окно при клике на ингредиент', () => {
       cy.contains('Краторная булка N-200i').click();
-      cy.get('body').should('exist');
+      
+      cy.get('[class*="modal"]').should('be.visible');
+      cy.contains('Краторная булка N-200i').should('be.visible');
     });
 
     it('должно закрыть модальное окно при нажатии ESC', () => {
       cy.contains('Краторная булка N-200i').click();
+      cy.get('[class*="modal"]').should('be.visible');
+      
       cy.get('body').type('{esc}');
-      cy.get('body').should('exist');
+      
+      cy.get('[class*="modal"]').should('not.exist');
     });
 
     it('должно закрыть модальное окно при клике на оверлей', () => {
       cy.contains('Краторная булка N-200i').click();
-      cy.get('body').click(10, 10, { force: true });
-      cy.get('body').should('exist');
+      cy.get('[class*="modal"]').should('be.visible');
+      
+      cy.get('[class*="modal-overlay"]').click({ force: true });
+      
+      cy.get('[class*="modal"]').should('not.exist');
     });
 
     it('должно отображать правильные данные ингредиента в модале', () => {
       cy.contains('Краторная булка N-200i').click();
-      cy.get('body').should('contain', 'Краторная булка N-200i');
-      cy.get('body').type('{esc}');
+      
+      cy.get('[class*="modal"]').within(() => {
+        cy.contains('Краторная булка N-200i').should('be.visible');
+        cy.contains('1255').should('be.visible');
+        cy.contains('Калории').should('be.visible');
+        cy.contains('Белки').should('be.visible');
+        cy.contains('Жиры').should('be.visible');
+        cy.contains('Углеводы').should('be.visible');
+      });
     });
   });
 
   describe('Создание заказа', () => {
     it('должно создать заказ с правильным номером', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains('Филе Люминесцентного тетраодона')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains(/оформить заказ/i).click();
 
-      cy.contains('12345', { timeout: 15000 }).should('be.visible');
+      cy.wait('@createOrder');
+
+      cy.get('[class*="modal"]').should('contain', '12345');
     });
 
     it('должно закрыть модальное окно заказа', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains('Филе Люминесцентного тетраодона')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains(/оформить заказ/i).click();
 
-      cy.contains('12345', { timeout: 15000 }).should('be.visible');
+      cy.wait('@createOrder');
+
+      cy.get('[class*="modal"]').should('contain', '12345');
+      
       cy.get('body').type('{esc}');
-      cy.get('body').should('exist');
+      
+      cy.get('[class*="modal"]').should('not.exist');
     });
 
     it('должно очистить конструктор после создания заказа', () => {
       cy.contains('Краторная булка N-200i')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
       cy.contains('Филе Люминесцентного тетраодона')
-        .parent()
+        .closest('div')
         .find('button')
         .click();
 
-      cy.contains(/оформить заказ/i).click();
+      cy.get('[class*="constructor-element"]').should('exist');
 
-      cy.contains('12345', { timeout: 15000 }).should('be.visible');
+      cy.contains(/оформить заказ/i).click();
+      
+      cy.wait('@createOrder');
+      
       cy.get('body').type('{esc}');
-      cy.get('body').should('exist');
+
+      cy.contains('Выберите булку', { timeout: 10000 }).should('be.visible');
     });
   });
 

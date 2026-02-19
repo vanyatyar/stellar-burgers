@@ -35,7 +35,6 @@ export const refreshToken = (): Promise<TRefreshResponse> =>
       return refreshData;
     });
 
-// Оптимизированная версия fetchWithRefresh
 export const fetchWithRefresh = async <T>(
   url: RequestInfo,
   options: RequestInit
