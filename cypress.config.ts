@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  chromeWebSecurity: false,
+  chromeWebSecurity: true,
   e2e: {
     baseUrl: 'http://localhost:8080',
     specPattern: 'cypress/e2e/**/*.cy.{js,ts}',

@@ -2,42 +2,6 @@
 
 describe('Stellar Burgers - Конструктор бургера', () => {
   beforeEach(() => {
-    cy.intercept('GET', 'https://norma.education-services.ru/api/ingredients', { 
-      fixture: 'ingredients.json' 
-    }).as('getIngredients');
-
-    cy.intercept('GET', 'https://norma.education-services.ru/api/auth/user', {
-      statusCode: 200,
-      body: {
-        success: true,
-        user: {
-          email: 'test@test.com',
-          name: 'Test User'
-        }
-      }
-    }).as('getUser');
-
-    cy.intercept('GET', 'https://norma.education-services.ru/api/orders/all', {
-      statusCode: 200,
-      body: {
-        success: true,
-        orders: [],
-        total: 0,
-        totalToday: 0
-      }
-    }).as('getOrders');
-
-    cy.intercept('POST', 'https://norma.education-services.ru/api/orders', {
-      statusCode: 200,
-      body: {
-        success: true,
-        name: 'Space бургер',
-        order: {
-          number: 12345
-        }
-      }
-    }).as('createOrder');
-
     cy.visit('/', {
       failOnStatusCode: false,
       onBeforeLoad(win) {
@@ -46,58 +10,73 @@ describe('Stellar Burgers - Конструктор бургера', () => {
       }
     });
 
-    cy.wait('@getIngredients', { timeout: 10000 });
-    
-    cy.contains('Краторная булка N-200i', { timeout: 10000 }).should('be.visible');
+    cy.intercept('GET', 'https://norma.education-services.ru/api/ingredients', { 
+      fixture: 'ingredients.json' 
+    }).as('getIngredients');
+
+    cy.intercept('GET', 'https://norma.education-services.ru/api/auth/user', { 
+      fixture: 'user.json' 
+    }).as('getUser');
+
+    cy.intercept('GET', 'https://norma.education-services.ru/api/orders/all', { 
+      fixture: 'orders.json' 
+    }).as('getOrders');
+
+    cy.intercept('POST', 'https://norma.education-services.ru/api/orders', { 
+      fixture: 'order.json' 
+    }).as('createOrder');
+
+    cy.wait('@getIngredients');
+    cy.contains('Краторная булка N-200i', { timeout: 100 }).should('be.visible');
   });
 
   describe('Добавление ингредиентов в конструктор', () => {
     it('должно добавить булку в конструктор', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
       cy.get('[class*="constructor-element"]').should('contain', 'Краторная булка N-200i');
     });
 
     it('должно добавить начинку в конструктор', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
-      cy.contains('Филе Люминесцентного тетраодона')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Филе Люминесцентного тетраодона')
         .find('button')
+        .first()
         .click();
 
       cy.get('[class*="constructor-element"]').should('contain', 'Филе Люминесцентного тетраодона');
     });
 
     it('должно добавить соус в конструктор', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
-      cy.contains('Соус Фалленианского плотоядного растения')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Соус Фалленианского плотоядного растения')
         .find('button')
+        .first()
         .click();
 
       cy.get('[class*="constructor-element"]').should('contain', 'Соус Фалленианского плотоядного растения');
     });
 
     it('должно заменить булку на другую', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
-      cy.contains('Флюоресцентная булка R2-D3')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Флюоресцентная булка R2-D3')
         .find('button')
+        .first()
         .click();
 
       cy.get('[class*="constructor-element"]').should('contain', 'Флюоресцентная булка R2-D3');
@@ -106,14 +85,14 @@ describe('Stellar Burgers - Конструктор бургера', () => {
 
   describe('Модальное окно ингредиента', () => {
     it('должно открыть модальное окно при клике на ингредиент', () => {
-      cy.contains('Краторная булка N-200i').click();
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i').click();
       
       cy.get('[class*="modal"]').should('be.visible');
       cy.contains('Краторная булка N-200i').should('be.visible');
     });
 
     it('должно закрыть модальное окно при нажатии ESC', () => {
-      cy.contains('Краторная булка N-200i').click();
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i').click();
       cy.get('[class*="modal"]').should('be.visible');
       
       cy.get('body').type('{esc}');
@@ -122,7 +101,7 @@ describe('Stellar Burgers - Конструктор бургера', () => {
     });
 
     it('должно закрыть модальное окно при клике на оверлей', () => {
-      cy.contains('Краторная булка N-200i').click();
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i').click();
       cy.get('[class*="modal"]').should('be.visible');
       
       cy.get('[class*="modal-overlay"]').click({ force: true });
@@ -131,7 +110,7 @@ describe('Stellar Burgers - Конструктор бургера', () => {
     });
 
     it('должно отображать правильные данные ингредиента в модале', () => {
-      cy.contains('Краторная булка N-200i').click();
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i').click();
       
       cy.get('[class*="modal"]').within(() => {
         cy.contains('Краторная булка N-200i').should('be.visible');
@@ -146,14 +125,14 @@ describe('Stellar Burgers - Конструктор бургера', () => {
 
   describe('Создание заказа', () => {
     it('должно создать заказ с правильным номером', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
-      cy.contains('Филе Люминесцентного тетраодона')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Филе Люминесцентного тетраодона')
         .find('button')
+        .first()
         .click();
 
       cy.contains(/оформить заказ/i).click();
@@ -164,14 +143,14 @@ describe('Stellar Burgers - Конструктор бургера', () => {
     });
 
     it('должно закрыть модальное окно заказа', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
-      cy.contains('Филе Люминесцентного тетраодона')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Филе Люминесцентного тетраодона')
         .find('button')
+        .first()
         .click();
 
       cy.contains(/оформить заказ/i).click();
@@ -186,14 +165,14 @@ describe('Stellar Burgers - Конструктор бургера', () => {
     });
 
     it('должно очистить конструктор после создания заказа', () => {
-      cy.contains('Краторная булка N-200i')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
         .find('button')
+        .first()
         .click();
 
-      cy.contains('Филе Люминесцентного тетраодона')
-        .closest('div')
+      cy.contains('[data-testid="card"]', 'Филе Люминесцентного тетраодона')
         .find('button')
+        .first()
         .click();
 
       cy.get('[class*="constructor-element"]').should('exist');
@@ -204,7 +183,7 @@ describe('Stellar Burgers - Конструктор бургера', () => {
       
       cy.get('body').type('{esc}');
 
-      cy.contains('Выберите булку', { timeout: 10000 }).should('be.visible');
+      cy.contains('Выберите булку', { timeout: 100 }).should('be.visible');
     });
   });
 
