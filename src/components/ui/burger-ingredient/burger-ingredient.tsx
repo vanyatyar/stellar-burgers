@@ -14,7 +14,7 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
     const location = useLocation();
 
     return (
-      <li className={styles.container}>
+      <li className={styles.container} data-testid='card'>
         <Link
           className={styles.article}
           to={`/ingredients/${_id}`}

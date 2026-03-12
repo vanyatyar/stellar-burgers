@@ -1,9 +1,9 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  chromeWebSecurity: true,
+  chromeWebSecurity: false,
   e2e: {
-    baseUrl: 'http://localhost:8080',
+    baseUrl: 'http://localhost:4000',
     specPattern: 'cypress/e2e/**/*.cy.{js,ts}',
     supportFile: 'cypress/support/e2e.ts',
     viewportWidth: 1280,
