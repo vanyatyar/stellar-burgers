@@ -2,26 +2,24 @@
 
 describe('Stellar Burgers - Конструктор бургера', () => {
   beforeEach(() => {
-    cy.intercept('GET', '*/api/ingredients', {
+    cy.intercept('GET', '**/api/ingredients', {
       fixture: 'ingredients'
     }).as('getIngredients');
 
-    cy.intercept('GET', '*/api/auth/user', {
+    cy.intercept('GET', '**/api/auth/user', {
       fixture: 'user'
     }).as('getUser');
 
-    // cy.intercept('GET', '*/api/orders/all', {
-    //   fixture: 'orders.json'
-    // }).as('getOrders');
-
-    cy.intercept('POST', '*/api/orders', {
+    cy.intercept('POST', '**/api/orders', {
       fixture: 'order'
     }).as('createOrder');
 
-    localStorage.setItem('accessToken', 'Bearer test-token');
-    localStorage.setItem('refreshToken', 'test-refresh-token');
-
-    cy.visit('/');
+    cy.visit('/', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('accessToken', 'Bearer test-token');
+        win.localStorage.setItem('refreshToken', 'test-refresh-token');
+      }
+    });
   });
 
   it('должно добавить булку в конструктор', () => {
@@ -130,10 +128,7 @@ describe('Stellar Burgers - Конструктор бургера', () => {
   });
 
   it('должно создать заказ с правильным номером', () => {
-    cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
-      .find('button')
-      .first()
-      .click();
+    cy.wait('@getUser');
 
     cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
       .find('button')
@@ -144,14 +139,11 @@ describe('Stellar Burgers - Конструктор бургера', () => {
 
     cy.wait('@createOrder');
 
-    cy.get('[class*="modal"]').should('contain', '12345');
+    cy.get('[data-testid="modal"]').should('contain', '12345');
   });
 
   it('должно закрыть модальное окно заказа', () => {
-    cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
-      .find('button')
-      .first()
-      .click();
+    cy.wait('@getUser');
 
     cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
       .find('button')
@@ -162,25 +154,22 @@ describe('Stellar Burgers - Конструктор бургера', () => {
 
     cy.wait('@createOrder');
 
-    cy.get('[class*="modal"]').should('contain', '12345');
+    cy.get('[data-testid="modal"]').should('contain', '12345');
 
     cy.get('body').type('{esc}');
 
-    cy.get('[class*="modal"]').should('not.exist');
+    cy.get('[data-testid="modal"]').should('not.exist');
   });
 
   it('должно очистить конструктор после создания заказа', () => {
-    cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
-      .find('button')
-      .first()
-      .click();
+    cy.wait('@getUser');
 
     cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
       .find('button')
       .first()
       .click();
 
-    cy.get('[class*="constructor-element"]').should('exist');
+    cy.get('[data-testid="burger-constructor"]').should('exist');
 
     cy.contains(/оформить заказ/i).click();
 
@@ -188,7 +177,7 @@ describe('Stellar Burgers - Конструктор бургера', () => {
 
     cy.get('body').type('{esc}');
 
-    cy.contains('Выберите булку', { timeout: 100 }).should('be.visible');
+    cy.contains('Выберите булки').should('be.visible');
   });
 
   afterEach(() => {
