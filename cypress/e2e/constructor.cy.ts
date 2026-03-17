@@ -59,31 +59,26 @@ describe('Stellar Burgers - Конструктор бургера', () => {
   });
 
   it('должно заменить булку на другую', () => {
-    // Добавляем первую булку
     cy.contains('[data-testid="card"]', 'Краторная булка N-200i')
       .find('button')
       .first()
       .click();
 
-    // Проверяем, что первая булка добавилась
     cy.get('[class*="constructor-element"]').should(
       'contain',
       'Краторная булка N-200i'
     );
 
-    // Добавляем вторую булку (должна заменить первую)
     cy.contains('[data-testid="card"]', 'Флюоресцентная булка R2-D3')
       .find('button')
       .first()
       .click();
 
-    // Проверяем, что теперь отображается вторая булка
     cy.get('[class*="constructor-element"]').should(
       'contain',
       'Флюоресцентная булка R2-D3'
     );
     
-    // Проверяем, что первой булки больше нет
     cy.get('[class*="constructor-element"]').should(
       'not.contain',
       'Краторная булка N-200i'
