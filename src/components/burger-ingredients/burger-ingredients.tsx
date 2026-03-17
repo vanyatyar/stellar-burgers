@@ -1,16 +1,23 @@
-import { useState, useRef, useEffect, FC } from 'react';
+import { useState, useRef, useEffect, FC, memo } from 'react';
 import { useInView } from 'react-intersection-observer';
-
+import { useSelector } from '../../services/store';
+import {
+  selectIngredients,
+  selectIngredientsLoading
+} from '../../services/selectors';
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
-export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
-  const buns = [];
-  const mains = [];
-  const sauces = [];
+export const BurgerIngredients: FC = memo(() => {
+  const ingredients = useSelector(selectIngredients);
+  const isLoading = useSelector(selectIngredientsLoading);
+
+  const buns = ingredients.filter((ing) => ing.type === 'bun');
+  const mains = ingredients.filter((ing) => ing.type === 'main');
+  const sauces = ingredients.filter((ing) => ing.type === 'sauce');
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
+
   const titleBunRef = useRef<HTMLHeadingElement>(null);
   const titleMainRef = useRef<HTMLHeadingElement>(null);
   const titleSaucesRef = useRef<HTMLHeadingElement>(null);
@@ -47,21 +54,27 @@ export const BurgerIngredients: FC = () => {
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  return null;
+  if (isLoading) {
+    return null;
+  }
 
   return (
-    <BurgerIngredientsUI
-      currentTab={currentTab}
-      buns={buns}
-      mains={mains}
-      sauces={sauces}
-      titleBunRef={titleBunRef}
-      titleMainRef={titleMainRef}
-      titleSaucesRef={titleSaucesRef}
-      bunsRef={bunsRef}
-      mainsRef={mainsRef}
-      saucesRef={saucesRef}
-      onTabClick={onTabClick}
-    />
+    <div data-testid='burger-ingredients'>
+      <BurgerIngredientsUI
+        currentTab={currentTab}
+        buns={buns}
+        mains={mains}
+        sauces={sauces}
+        titleBunRef={titleBunRef}
+        titleMainRef={titleMainRef}
+        titleSaucesRef={titleSaucesRef}
+        bunsRef={bunsRef}
+        mainsRef={mainsRef}
+        saucesRef={saucesRef}
+        onTabClick={onTabClick}
+      />
+    </div>
   );
-};
+});
+
+BurgerIngredients.displayName = 'BurgerIngredients';

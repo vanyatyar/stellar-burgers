@@ -1,19 +1,20 @@
 export type TIngredient = {
   _id: string;
   name: string;
-  type: string;
+  type: 'bun' | 'main' | 'sauce';
   proteins: number;
   fat: number;
   carbohydrates: number;
   calories: number;
   price: number;
   image: string;
-  image_large: string;
   image_mobile: string;
+  image_large: string;
 };
 
 export type TConstructorIngredient = TIngredient & {
-  id: string;
+  uid: string;
+  id?: string;
 };
 
 export type TOrder = {
@@ -35,6 +36,24 @@ export type TOrdersData = {
 export type TUser = {
   email: string;
   name: string;
+};
+
+export type TRegisterData = {
+  email: string;
+  password: string;
+  name: string;
+};
+
+export type TLoginData = {
+  email: string;
+  password: string;
+};
+
+export type TAuthResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+  user: TUser;
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';

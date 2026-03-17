@@ -1,3 +1,4 @@
+// src/components/ui/modal/modal.tsx
 import { FC, memo } from 'react';
 
 import styles from './modal.module.css';
@@ -9,7 +10,7 @@ import { ModalOverlayUI } from '@ui';
 export const ModalUI: FC<TModalUIProps> = memo(
   ({ title, onClose, children }) => (
     <>
-      <div className={styles.modal}>
+      <div className={styles.modal} data-testid='modal'>
         <div className={styles.header}>
           <h3 className={`${styles.title} text text_type_main-large`}>
             {title}

@@ -1,4 +1,8 @@
 import { FC, SyntheticEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { useDispatch, useSelector } from '../../services/store';
+import { registerUser } from '../../services/slices/userSlice';
 import { RegisterUI } from '@ui-pages';
 
 export const Register: FC = () => {
@@ -6,18 +10,33 @@ export const Register: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { isLoading, error } = useSelector((state) => ({
+    isLoading: state.user.isLoading,
+    error: state.user.error
+  }));
+
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+
+    dispatch(registerUser({ email, password, name: userName }))
+      .unwrap()
+      .then(() => {
+        navigate('/', { replace: true });
+      })
+      .catch(() => {});
   };
 
   return (
     <RegisterUI
-      errorText=''
+      errorText={error ?? undefined}
       email={email}
-      userName={userName}
-      password={password}
       setEmail={setEmail}
+      password={password}
       setPassword={setPassword}
+      userName={userName}
       setUserName={setUserName}
       handleSubmit={handleSubmit}
     />

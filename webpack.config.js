@@ -58,17 +58,7 @@ module.exports = {
   ],
   resolve: {
     extensions: [
-      '*',
-      '.js',
-      '.jsx',
-      '.ts',
-      '.tsx',
-      '.json',
-      '.css',
-      '.scss',
-      '.png',
-      '.svg',
-      '.jpg'
+      '*', '.js', '.jsx', '.ts', '.tsx', '.json', '.css', '.scss', '.png', '.svg', '.jpg'
     ],
     alias: {
       '@pages': path.resolve(__dirname, './src/pages'),
@@ -83,12 +73,20 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/',
+    clean: true
   },
   devServer: {
-    static: path.join(__dirname, './dist'),
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
     compress: true,
-    historyApiFallback: true,
-    port: 4000
+    port: 4000,
+    historyApiFallback: {
+      index: '/index.html',
+      disableDotRule: true
+    },
+    hot: true
   }
 };
